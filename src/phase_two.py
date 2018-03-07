@@ -12,6 +12,7 @@ The sonar and bump sensors are suggested by the assessment specifications.
 If you use the optical sensor to count tiles as you navigate, allow for the
 bot's passage over the small (light and dark) tiles.
 
+Author: 
 Date: 07/03/2018
 Version: 1
 """
