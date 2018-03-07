@@ -15,6 +15,10 @@ Version: 1
 
 from ev3dev.ev3 import *
 import sys
+import phase_one
+import phase_two
+import phase_three
+
 
 
 """ 
@@ -26,8 +30,9 @@ main() assumes each of the function tasks will block until the task and the
 bot is idle, ready to begin the next phase.
 """
 def main():
-    # remove the following line and replace with your code
-    raise ValueError('A very specific bad thing happened.')
+    phase_one.drive_off()
+    phase_two.approach_tower()
+    phase_three.push_tower()
 
 
 """
