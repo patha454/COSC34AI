@@ -7,6 +7,8 @@ phase_two can use and combination of the sensors available to locate the tower,
 as well as dead reckoning - the tower (should) be seven large tiles directly
 in front of the bot.
 
+The sonar and bump sensors are suggested by the assessment specifications.
+
 If you use the optical sensor to count tiles as you navigate, allow for the
 bot's passage over the small (light and dark) tiles.
 
