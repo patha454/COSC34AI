@@ -25,3 +25,11 @@ tile is passed.
 """
 def driveOff():
     return
+
+
+"""
+__main()__ is provided for testing, so driveOff() can be executed
+independently of other functions by executing phaseOne.py on the bot
+"""
+if __name__ == "__main__":
+    driveOff()
