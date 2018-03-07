@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-phaseOne.py
+phase_one.py
 This is the script for the first phase of the bot's operation.
-phaseOne will drive the bot forward over black and white tiles, for a count of
+phase_one will drive the bot forward over black and white tiles, for a count of
 15 black tiles.
 
 After passing 15 black tiles, the bot will turn ninety degrease right and
@@ -15,21 +15,23 @@ Version: 1
 
 
 """
-driveOff() is the entry function in phaseOne.
-Only driveOff() should be used by code outside the module phaseOne.
-driveOff() will supervise the bot to drive forward 15 black tiles,
+drive_off() is the entry function in phaseOne.
+Only drive_off() should be used by code outside the module phaseOne.
+drive_off() will supervise the bot to drive forward 15 black tiles,
 stop, and turn right.
 
-driveOff() will also make a 'distinctive noise' each time a black 
+drive_off() will also make a 'distinctive noise' each time a black 
 tile is passed.
 """
-def driveOff():
+
+
+def drive_off():
     return
 
 
 """
-__main()__ is provided for testing, so driveOff() can be executed
+__main()__ is provided for testing, so drive_off() can be executed
 independently of other functions by executing phaseOne.py on the bot
 """
 if __name__ == "__main__":
-    driveOff()
+    drive_off()
