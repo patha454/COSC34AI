@@ -11,7 +11,7 @@ Outcome:
 To do:
 ---------------------------------------------------------------------------------------------
 
-If you find a non-trival semantic bug in code someone else wrote, you should check with them what it's
+If you find a non-trivial semantic bug in code someone else wrote, you should check with them what it's
 supposed to do, and probably let them fix it unless an obvious fix presents itself.
 
 Sample report:
