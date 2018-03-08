@@ -130,6 +130,8 @@ Usage:
 aSensor = LightIntensitySensor()
 aSensor.value()
 """
+
+
 class LightIntensitySensor:
 
     # The period of time the sensor averages data over (seconds)
