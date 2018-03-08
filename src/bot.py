@@ -146,6 +146,7 @@ class LightIntensitySensor:
         sensor = ColorSensor()
         sensor.mode = 'COL-REFLECT'
         sensor_thread = threading.Thread(target=self.sensor_loop)
+        sensor_thread.daemon = True
         sensor_thread.start()
         return
 
