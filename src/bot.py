@@ -140,12 +140,14 @@ class LightIntensitySensor:
 
     sensor = None
     data = []
+    sensor_thread = None
 
     def __init__(self):
         sensor = ColorSensor()
         sensor.mode = 'COL-REFLECT'
         sensor_thread = threading.Thread(target=self.sensor_loop)
-        sensor_thread.run()
+        sensor_thread.daemon = True
+        sensor_thread.start()
         return
 
     def sensor_loop(self):
@@ -153,9 +155,7 @@ class LightIntensitySensor:
             reading = self.sensor.value()
             if len(self.data) >= self.SENSOR_PRECISION:
                 self.data.pop(0)
-                self.data.append(reading)
-            else:
-                self.data.append(reading)
+            self.data.append(reading)
             sleep(self.SENSOR_PERIOD / self.SENSOR_PRECISION)
 
     """
