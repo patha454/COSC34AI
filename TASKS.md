@@ -40,7 +40,7 @@ Otherwise make high level wrappers around the EV3 API for ease-of-use.
 
 Assigned to: H Paterson
 
-Status: Intial code available, but untested. 
+Status: V2 tested and working as documented.
 We may also want to wrap the sonar into a search algorithm, depending how we implement the approach to the tower.
 
 

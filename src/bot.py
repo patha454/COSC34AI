@@ -5,8 +5,8 @@ bot encapsulates the motors and provides several sensor daemons to
 allow more intuitive high level use of the EV3's features
 
 Author: H Paterson
-Version: 1
-Date: 07/03/18
+Version: 2
+Date: 11/03/18
 """
 
 
@@ -32,7 +32,7 @@ RIDICULOUS_SPEED = 700
 LUDICROUS_SPEED = 900
 
 # These are wheel angles required to turn the body a given angle
-NINETY_DEG = 90
+NINETY_DEG = 180
 QUATER_TURN = NINETY_DEG
 HALF_TURN = 2 * QUATER_TURN
 FULL_TURN = 2 * HALF_TURN
@@ -58,7 +58,7 @@ def drive_forward(distance, speed=NORMAL_SPEED):
 
 
 """
-drive_untill drives the bot forward until a condition is met.
+drive_until drives the bot forward until a condition is met.
 
 drive_until blocks until the maneuver is finishes (so the condition is true.)
 
@@ -76,9 +76,11 @@ drive_until(aTest, NORMAL_SPEED)
 
 
 def drive_until(predicate, speed=NORMAL_SPEED):
+    motors.run_forever(speed_sp = speed)
+    # motors.run_to_rel_pos(position_sp = 10000, speed_sp = speed)
     while not predicate():
-        motors.run_to_rel_pos(position_sp=5, speed_sp=speed)
-        motors.wait_while('running')
+        continue
+    motors.stop()
     return
 
 
@@ -145,11 +147,13 @@ class LightIntensitySensor:
     sensor_thread = None
 
     def __init__(self):
-        sensor = ColorSensor()
-        sensor.mode = 'COL-REFLECT'
-        sensor_thread = threading.Thread(target=self.sensor_loop)
-        sensor_thread.daemon = True
-        sensor_thread.start()
+        self.sensor = ColorSensor()
+        self.sensor.mode = 'COL-REFLECT'
+        self.sensor_thread = threading.Thread(target=self.sensor_loop)
+        self.sensor_thread.daemon = True
+        self.sensor_thread.start()
+        # Allow time for the sensor to populate itself with values
+        sleep(self.SENSOR_PERIOD)
         return
 
     def sensor_loop(self):
