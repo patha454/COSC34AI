@@ -10,7 +10,7 @@ return control to the caller, ready for the next phase.
 
 Author: H Paterson
 Date: 07/03/2018
-Version: 2
+Version: 3
 """
 
 
@@ -21,7 +21,7 @@ from ev3dev.ev3 import Sound
 
 
 # The number of black tiles to drive past
-TILE_DISTANCE = 15
+TILE_DISTANCE = 5
 
 """
 drive_off() is the entry function in phaseOne.
@@ -37,6 +37,7 @@ tile is passed.
 def drive_off():
     tile_counter = TileCounter()
     bot.drive_until(lambda: tile_counter.tiles_passed >= TILE_DISTANCE)
+
     bot.turn_right(bot.QUATER_TURN)
 
 
@@ -59,6 +60,9 @@ class TileCounter:
     # The daemonic counter
     counter_thread = None
 
+    # When to kill the thread
+    alive = True
+
     """
     count_tiles() - Counts the number of black tiles passed.
     count_tiles is intended to be run in an independent thread.
@@ -73,13 +77,14 @@ class TileCounter:
     """
 
     def count_tiles(self):
-        while True:
+        while self.alive:
             if self.current_colour > self.THRESHOLD_FACTOR * self.previous_colour:
                 Sound.beep()
                 self.tiles_passed += 1
             self.previous_colour = self.current_colour
             self.current_colour = self.average_colour.value()
             sleep(self.average_colour.SENSOR_PERIOD * 1.2)
+        return
 
     """
     Initialises the daemon thread.
@@ -95,6 +100,12 @@ class TileCounter:
         self.counter_thread.daemon = True
         self.counter_thread.start()
         return
+
+    """Shuts down the thread"""
+
+    def kill(self):
+        self.average_colour.kill()
+        self.alive = False
 
 
 """

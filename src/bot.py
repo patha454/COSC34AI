@@ -142,6 +142,9 @@ class LightIntensitySensor:
     # The number of data points the sensor saves
     SENSOR_PRECISION = 5
 
+    # Should the thread still run
+    alive = True
+
     sensor = None
     data = []
     sensor_thread = None
@@ -157,12 +160,13 @@ class LightIntensitySensor:
         return
 
     def sensor_loop(self):
-        while True:
+        while self.alive:
             reading = self.sensor.value()
             if len(self.data) >= self.SENSOR_PRECISION:
                 self.data.pop(0)
             self.data.append(reading)
             sleep(self.SENSOR_PERIOD / self.SENSOR_PRECISION)
+        return
 
     """
     value() returns the average sensor reading over the last
@@ -174,3 +178,9 @@ class LightIntensitySensor:
             average += self.data[i]
         average /= self.SENSOR_PRECISION
         return average
+
+    """
+    Terminates the thread
+    """
+    def kill(self):
+        self.alive = False
