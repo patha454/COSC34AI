@@ -10,7 +10,7 @@ return control to the caller, ready for the next phase.
 
 Author: H Paterson
 Date: 07/03/2018
-Version: 1
+Version: 2
 """
 
 
@@ -35,15 +35,7 @@ tile is passed.
 
 
 def drive_off():
-    print("Creating counter")
     tile_counter = TileCounter()
-    """
-    tile_counter_thread = threading.Thread(tile_counter.count_tiles())
-    tile_counter_thread.daemon = True
-    print("Starting thread")
-    tile_counter_thread.start()
-    """
-    print("Driving")
     bot.drive_until(lambda: tile_counter.tiles_passed >= TILE_DISTANCE)
     bot.turn_right(bot.QUATER_TURN)
 
@@ -59,10 +51,13 @@ class TileCounter:
     current_colour = 0
 
     # The minimum increase in light intensity from a black to white tile.
-    THRESHOLD_FACTOR = 1.3
+    THRESHOLD_FACTOR = 2
 
     # The object to read values from
     average_colour = None
+
+    # The daemonic counter
+    counter_thread = None
 
     """
     count_tiles() - Counts the number of black tiles passed.
@@ -96,9 +91,9 @@ class TileCounter:
         self.previous_colour = self.average_colour.value()
         self.current_colour = self.previous_colour
         # Start the daemon
-        counter_thread = threading.Thread(target=self.count_tiles())
-        counter_thread.daemon = True
-        counter_thread.start()
+        self.counter_thread = threading.Thread(target=self.count_tiles)
+        self.counter_thread.daemon = True
+        self.counter_thread.start()
         return
 
 
