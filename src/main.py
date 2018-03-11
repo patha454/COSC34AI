@@ -14,10 +14,10 @@ Version: 1
 
 
 from ev3dev.ev3 import *
-import sys
 import phase_one
 import phase_two
 import phase_three
+
 
 
 """ 
@@ -31,9 +31,11 @@ bot is idle, ready to begin the next phase.
 
 
 def main():
+    import bot
+    bot.drive_forward(300)
     phase_one.drive_off()
-    phase_two.approach_tower()
-    phase_three.push_tower()
+    # phase_two.approach_tower()
+    # phase_three.push_tower()
 
 
 """
@@ -41,8 +43,8 @@ __main__() is the bot's real entry point into the script.
 __main__() executes the bot script main(), and catches exceptions for printing
 to the console.
 """
+btn = Button()
 try:
-    btn = Button()
     main()
 except:
     import traceback

@@ -35,10 +35,15 @@ tile is passed.
 
 
 def drive_off():
+    print("Creating counter")
     tile_counter = TileCounter()
+    """
     tile_counter_thread = threading.Thread(tile_counter.count_tiles())
     tile_counter_thread.daemon = True
+    print("Starting thread")
     tile_counter_thread.start()
+    """
+    print("Driving")
     bot.drive_until(lambda: tile_counter.tiles_passed >= TILE_DISTANCE)
     bot.turn_right(bot.QUATER_TURN)
 
@@ -90,6 +95,11 @@ class TileCounter:
         sleep(self.average_colour.SENSOR_PERIOD)
         self.previous_colour = self.average_colour.value()
         self.current_colour = self.previous_colour
+        # Start the daemon
+        counter_thread = threading.Thread(target=self.count_tiles())
+        counter_thread.daemon = True
+        counter_thread.start()
+        return
 
 
 """
