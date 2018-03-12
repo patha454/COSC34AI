@@ -45,6 +45,9 @@ EIGHTH_TURN = QUARTER_TURN / 2
 LEFT = 1
 RIGHT = -1
 
+# A small turn for until functions
+TURN_QUANTUM = 5
+
 
 """
 drive_forward drives the bot forward a specified distance (in wheel rotations)
@@ -82,12 +85,12 @@ drive_until(aTest, NORMAL_SPEED)
 """
 
 
-def drive_until(predicate, speed=NORMAL_SPEED):
-    motors.run_forever(speed_sp=speed)
+def drive_until(predicate, distance=0, speed=NORMAL_SPEED):
     while not predicate():
-        continue
-    motors.stop()
-    return
+        distance += TURN_QUANTUM
+        motors.run_to_rel_pos(position_sp=TURN_QUANTUM, speed_sp=speed)
+        motors.wait_while('running')
+    return distance
 
 
 """
@@ -121,6 +124,32 @@ turn_right(someDistance, someSpeed)
 def turn_right(distance, speed=NORMAL_SPEED):
     turn_left(-1 * distance, speed)
     return
+
+
+"""
+curve_left_until curve left until a condition is met, then returns how far 
+the bot turned.
+"""
+
+
+def curve_left_until(predicate, distance_turned=0, speed=NORMAL_SPEED):
+    while not predicate():
+        distance_turned += TURN_QUANTUM
+        curve_left(TURN_QUANTUM, speed)
+    return distance_turned
+
+
+"""
+curve__right_until turns left until a condition is met, then returns how far 
+the bot turned.
+"""
+
+
+def curve_right_until(predicate, distance_turned=0, speed=NORMAL_SPEED):
+    while not predicate():
+        distance_turned += TURN_QUANTUM
+        curve_right(TURN_QUANTUM, speed)
+    return distance_turned
 
 
 """
@@ -207,7 +236,7 @@ aSensor.value()
 class LightIntensitySensor:
 
     # The period of time the sensor averages data over (seconds)
-    SENSOR_PERIOD = 0.2
+    SENSOR_PERIOD = 0.1
 
     # The number of data points the sensor saves
     SENSOR_PRECISION = 5

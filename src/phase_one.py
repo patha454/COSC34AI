@@ -28,7 +28,7 @@ TILE_DISTANCE = 14
 
 
 # The angle used for edge of track avoidance
-CORRECTION_ANGLE = bot.QUARTER_TURN / 2
+CORRECTION_ANGLE = bot.QUARTER_TURN / 4
 
 
 """
@@ -64,19 +64,39 @@ the function is called.
 
 
 def move_to_next_tile(tile_counter):
+    tile_counter.reset()
+    left_dist = bot.curve_left_until(lambda: tile_counter.found_white)
+    left_angle = (left_dist / bot.FULL_TURN) * 360
+    bot.curve_left(-left_dist)
+    tile_counter.reset()
+    right_dist = bot.curve_right_until(lambda: tile_counter.found_white)
+    right_angle = (right_dist / bot.FULL_TURN) * 360
+    bot.curve_right(-right_dist)
+    left_correction_angle = (left_angle - right_angle) / 3
+    left_correction = (left_correction_angle / 360) * bot.FULL_TURN
+    print("l: ", left_angle)
+    print("r: ", right_angle)
+    print("c: ", left_correction)
+    if left_correction > 0:
+        bot.curve_left(left_correction)
+    else:
+        bot.curve_right(-1 * left_correction)
+    """
     # Check for white to either side
     left_white = check_side(bot.LEFT, tile_counter)
     right_white = check_side(bot.RIGHT, tile_counter)
+    
     # Compute a course correction
     if not left_white and not right_white:
         pass
     elif left_white and not right_white:
-        bot.turn_right(CORRECTION_ANGLE / 2)
+        bot.turn_right(CORRECTION_ANGLE)
     elif right_white and not left_white:
-        bot.turn_left(CORRECTION_ANGLE / 2)
+        bot.turn_left(CORRECTION_ANGLE )
     # drive forward
+    """
     tile_counter.reset()
-    bot.drive_until(tile_counter.found_black)
+    bot.drive_until(lambda: tile_counter.found_black)
 
 
 """
@@ -104,7 +124,7 @@ class TileReader:
     current_colour = 0
 
     # The light intensify threshold factor indicating going from black to white
-    BLACK_THRESHOLD = 2
+    BLACK_THRESHOLD = 1.7
 
     # The object to read values from
     colour_sensor = None
