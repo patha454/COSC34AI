@@ -13,6 +13,7 @@ Date: 11/03/18
 from ev3dev.ev3 import *
 from helper import *
 import threading
+import time
 
 
 # These might be the wrong way around.
@@ -76,11 +77,52 @@ drive_until(aTest, NORMAL_SPEED)
 
 
 def drive_until(predicate, speed=NORMAL_SPEED):
-    motors.run_forever(speed_sp = speed)
+    motors.run_forever(speed_sp=speed)
     # motors.run_to_rel_pos(position_sp = 10000, speed_sp = speed)
     while not predicate():
         continue
     motors.stop()
+    return
+
+
+FACING_LEFT = 1
+FACING_RIGHT = -1
+
+
+""" 
+zig_zag_forward attempts drives in a shallow zig zag pattern.
+This is an attempt to cancel out the course deviation in drive_until
+"""
+
+
+def waddle_until(predicate, speed=NORMAL_SPEED):
+    while not predicate():
+        leftMotor.run_to_rel_pos(position_sp=50, speed_sp=speed)
+        leftMotor.wait_while('running')
+        rightMotor.run_to_rel_pos(position_sp=50, speed_sp=speed)
+        rightMotor.wait_while('running')
+    return
+
+
+def zig_zag_until(predicate, speed=NORMAL_SPEED):
+    turn_angle = QUATER_TURN / 4
+    facing = FACING_LEFT
+    turn_left(turn_angle / 2)
+    while not predicate():
+        drive_forward(45, speed)
+        if facing == FACING_LEFT:
+            turn_right(turn_angle, speed)
+            time.sleep(0.05)
+            facing = FACING_RIGHT
+        else:
+            turn_left(turn_angle, speed)
+            time.sleep(0.05)
+            facing = FACING_LEFT
+    # Time to straighten out
+    if facing == FACING_LEFT:
+        turn_right(turn_angle / 2)
+    if facing == FACING_RIGHT:
+        turn_left(turn_angle / 2)
     return
 
 
@@ -95,8 +137,8 @@ turn_left(someDistance, someSpeed)
 
 
 def turn_left(distance, speed=NORMAL_SPEED):
-    leftMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
-    rightMotor.run_to_rel_pos(position_sp=-distance, speed_sp=speed)
+    leftMotor.run_to_rel_pos(position_sp=-distance, speed_sp=speed)
+    rightMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
     leftMotor.wait_while('running')
     rightMotor.wait_while('running')
     return
@@ -113,11 +155,28 @@ turn_right(someDistance, someSpeed)
 
 
 def turn_right(distance, speed=NORMAL_SPEED):
-    leftMotor.run_to_rel_pos(position_sp=-distance, speed_sp=speed)
-    rightMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
-    leftMotor.wait_while('running')
-    rightMotor.wait_while('running')
+    turn_left(-1 * distance, speed)
     return
+
+
+"""
+curve_right swings the body right without moving the light sensor backward
+"""
+
+
+def curve_right(distance, speed=NORMAL_SPEED):
+    leftMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
+    leftMotor.wait_while('running')
+
+
+"""
+curve_right swings the body right without moving the light sensor backward
+"""
+
+
+def curve_left(distance, speed=NORMAL_SPEED):
+    rightMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
+    rightMotor.wait_while('running')
 
 
 """

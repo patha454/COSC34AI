@@ -21,7 +21,7 @@ from ev3dev.ev3 import Sound
 
 
 # The number of black tiles to drive past
-TILE_DISTANCE = 5
+TILE_DISTANCE = 14
 
 """
 drive_off() is the entry function in phaseOne.
@@ -36,8 +36,7 @@ tile is passed.
 
 def drive_off():
     tile_counter = TileCounter()
-    bot.drive_until(lambda: tile_counter.tiles_passed >= TILE_DISTANCE)
-
+    bot.zig_zag_until(lambda: tile_counter.tiles_passed >= TILE_DISTANCE, bot.NORMAL_SPEED)
     bot.turn_right(bot.QUATER_TURN)
 
 
@@ -52,7 +51,10 @@ class TileCounter:
     current_colour = 0
 
     # The minimum increase in light intensity from a black to white tile.
-    THRESHOLD_FACTOR = 2
+    BLACK_THRESHOLD = 2
+
+    # The minimum increase in average light intensity onto a grey line
+    GREY_THRESHOLD = 1.2
 
     # The object to read values from
     average_colour = None
@@ -78,7 +80,7 @@ class TileCounter:
 
     def count_tiles(self):
         while self.alive:
-            if self.current_colour > self.THRESHOLD_FACTOR * self.previous_colour:
+            if self.current_colour > self.BLACK_THRESHOLD * self.previous_colour:
                 Sound.beep()
                 self.tiles_passed += 1
             self.previous_colour = self.current_colour

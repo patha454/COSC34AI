@@ -31,8 +31,6 @@ bot is idle, ready to begin the next phase.
 
 
 def main():
-    import bot
-    bot.drive_forward(300)
     phase_one.drive_off()
     # phase_two.approach_tower()
     # phase_three.push_tower()
