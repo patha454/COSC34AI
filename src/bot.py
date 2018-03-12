@@ -5,8 +5,8 @@ bot encapsulates the motors and provides several sensor daemons to
 allow more intuitive high level use of the EV3's features
 
 Author: H Paterson
-Version: 2
-Date: 11/03/18
+Version: 3
+Date: 12/03/18
 """
 
 
@@ -16,13 +16,13 @@ import threading
 import time
 
 
-# These might be the wrong way around.
+# The objects used to control the motors.
 leftMotor = LargeMotor('outB')
 rightMotor = LargeMotor('outC')
 motors = LargeMotorPair(OUTPUT_B, OUTPUT_C)
 
 
-# These are speeds for the motors, in wheel rotations per second
+# These are speeds for the motors, in wheel rotations per second.
 CRAWL_SPEED = 20
 SLOW_SPEED = 50
 INTERMEDIATE_SPEED = 100
@@ -32,12 +32,18 @@ LIGHT_SPEED = 500
 RIDICULOUS_SPEED = 700
 LUDICROUS_SPEED = 900
 
-# These are wheel angles required to turn the body a given angle
+
+# These are wheel angles required to turn the body a given angle.
 NINETY_DEG = 180
-QUATER_TURN = NINETY_DEG
-HALF_TURN = 2 * QUATER_TURN
+QUARTER_TURN = NINETY_DEG
+HALF_TURN = 2 * QUARTER_TURN
 FULL_TURN = 2 * HALF_TURN
-EIGHTH_TURN = QUATER_TURN / 2
+EIGHTH_TURN = QUARTER_TURN / 2
+
+
+# These indicate turn directions. Their values are significant to some computations.
+LEFT = 1
+RIGHT = -1
 
 
 """
@@ -78,51 +84,9 @@ drive_until(aTest, NORMAL_SPEED)
 
 def drive_until(predicate, speed=NORMAL_SPEED):
     motors.run_forever(speed_sp=speed)
-    # motors.run_to_rel_pos(position_sp = 10000, speed_sp = speed)
     while not predicate():
         continue
     motors.stop()
-    return
-
-
-FACING_LEFT = 1
-FACING_RIGHT = -1
-
-
-""" 
-zig_zag_forward attempts drives in a shallow zig zag pattern.
-This is an attempt to cancel out the course deviation in drive_until
-"""
-
-
-def waddle_until(predicate, speed=NORMAL_SPEED):
-    while not predicate():
-        leftMotor.run_to_rel_pos(position_sp=50, speed_sp=speed)
-        leftMotor.wait_while('running')
-        rightMotor.run_to_rel_pos(position_sp=50, speed_sp=speed)
-        rightMotor.wait_while('running')
-    return
-
-
-def zig_zag_until(predicate, speed=NORMAL_SPEED):
-    turn_angle = QUATER_TURN / 4
-    facing = FACING_LEFT
-    turn_left(turn_angle / 2)
-    while not predicate():
-        drive_forward(45, speed)
-        if facing == FACING_LEFT:
-            turn_right(turn_angle, speed)
-            time.sleep(0.05)
-            facing = FACING_RIGHT
-        else:
-            turn_left(turn_angle, speed)
-            time.sleep(0.05)
-            facing = FACING_LEFT
-    # Time to straighten out
-    if facing == FACING_LEFT:
-        turn_right(turn_angle / 2)
-    if facing == FACING_RIGHT:
-        turn_left(turn_angle / 2)
     return
 
 
@@ -177,6 +141,53 @@ curve_right swings the body right without moving the light sensor backward
 def curve_left(distance, speed=NORMAL_SPEED):
     rightMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
     rightMotor.wait_while('running')
+
+
+""" 
+waddle_until attempts drives in a shallow zig zag pattern.
+This is an attempt to cancel out the course deviation in drive_until.
+
+It is only mildly successful: Users will still need to use sensor 
+data to guide the robot.
+"""
+
+
+def waddle_until(predicate, speed=NORMAL_SPEED):
+    while not predicate():
+        leftMotor.run_to_rel_pos(position_sp=50, speed_sp=speed)
+        leftMotor.wait_while('running')
+        rightMotor.run_to_rel_pos(position_sp=50, speed_sp=speed)
+        rightMotor.wait_while('running')
+    return
+
+
+"""
+zig_zag_until() is conceptually the same as waddle_until().
+
+zig_zag_until, however, stops and turns in place.
+"""
+
+
+def zig_zag_until(predicate, speed=NORMAL_SPEED):
+    turn_angle = QUARTER_TURN / 4
+    facing = LEFT
+    turn_left(turn_angle / 2)
+    while not predicate():
+        drive_forward(45, speed)
+        if facing == LEFT:
+            turn_right(turn_angle, speed)
+            time.sleep(0.05)
+            facing = RIGHT
+        else:
+            turn_left(turn_angle, speed)
+            time.sleep(0.05)
+            facing = LEFT
+    # Time to straighten out
+    if facing == LEFT:
+        turn_right(turn_angle / 2)
+    if facing == RIGHT:
+        turn_left(turn_angle / 2)
+    return
 
 
 """
