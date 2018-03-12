@@ -30,9 +30,6 @@ TILE_DISTANCE = 14
 # The angle used for edge of track avoidance
 CORRECTION_ANGLE = bot.QUARTER_TURN / 2
 
-# The tile counter object
-tile_counter = TileCounter()
-
 
 """
 drive_off() is the entry function in phaseOne.
@@ -46,9 +43,10 @@ tile is passed.
 
 
 def drive_off():
+    tile_counter = TileReader()
     tiles_passed = 0
     while tiles_passed < TILE_DISTANCE:
-        move_to_next_tile()
+        move_to_next_tile(tile_counter)
         tiles_passed += 1
         Sound.beep()
     bot.turn_right(bot.QUARTER_TURN)
@@ -65,10 +63,10 @@ the function is called.
 """
 
 
-def move_to_next_tile():
+def move_to_next_tile(tile_counter):
     # Check for white to either side
-    left_white = check_side(bot.LEFT)
-    right_white = check_side(bot.RIGHT)
+    left_white = check_side(bot.LEFT, tile_counter)
+    right_white = check_side(bot.RIGHT, tile_counter)
     # Compute a course correction
     if not left_white and not right_white:
         pass
@@ -87,13 +85,13 @@ def move_to_next_tile():
 """
 
 
-def check_side(direction):
+def check_side(direction, tile_counter):
     tile_counter.reset()
     bot.turn_left(direction * CORRECTION_ANGLE)
     sleep(tile_counter.colour_sensor.SENSOR_PERIOD)
     bot.turn_right(direction * CORRECTION_ANGLE)
-    found_white = colour_sensor.found_white
-    colour_sensor.reset()
+    found_white = tile_counter.found_white
+    tile_counter.reset()
     return found_white
 
 
