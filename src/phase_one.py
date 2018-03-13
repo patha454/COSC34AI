@@ -51,6 +51,7 @@ def drive_off():
         Sound.beep()
     correct_heading(tile_counter)
     bot.turn_right(bot.QUARTER_TURN)
+    tile_counter.kill()
 
 
 """
