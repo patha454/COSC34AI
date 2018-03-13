@@ -12,8 +12,8 @@ This version uses a new algorithm, as the algorithm used up to V3 was found
 Unreliable in testing.
 
 Author: H Paterson
-Date: 12/03/2018
-Version: 4
+Date: 14/03/2018
+Version: 5
 """
 
 
