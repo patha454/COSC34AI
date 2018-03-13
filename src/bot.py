@@ -283,3 +283,67 @@ class LightIntensitySensor:
     """
     def kill(self):
         self.alive = False
+
+
+"""
+Sonar is a class tha encapsulates the ultrasound device.
+
+Sonar aims to remove noise by taking the average reading over time.
+
+Sonar return the distance to the object in CM.
+"""
+
+class Sonar:
+
+    # The period for the sonar to average, in seconds
+    SENSOR_PERIOD = 0.2
+
+    # The samples to take over SENSOR_PERIOD
+    SENSOR_SAMPLES = 5
+
+    # Recent readings
+    data = []
+
+    # When to kill the thread
+    is_alive = True
+
+    # The sonar daemon thread
+    daemon = None
+
+    # The device ultrasound sensor
+    sensor = None
+
+    def __init__(self):
+        self.sensor = UltrasonicSensor()
+        self.sensor.mode = 'US-DIST-CM'
+        self.daemon = threading.Thread(target=self.sensor_loop)
+        self.daemon.deamon = True
+        self.daemon.start()
+
+    """
+    sensor_loop: reads and averages the ultrasound range.
+    """
+
+    def sensor_loop(self):
+        while self.is_alive:
+            self.data.append(self.sensor.value())
+            if len(self.data) > self.SENSOR_SAMPLES:
+                self.data.pop(0)
+        return
+
+
+    """
+    value: Returns the time average sonar reading, in cm
+    """
+    def value(self):
+        average = 0
+        for i in range(len(self.data)):
+            average += self.data[i]
+        average /= len(self.data)
+        return average
+
+    """
+    kill the thread
+    """
+    def kill(self):
+        self.is_alive = False
