@@ -12,8 +12,8 @@ This version uses a new algorithm, as the algorithm used up to V3 was found
 Unreliable in testing.
 
 Author: H Paterson
-Date: 12/03/2018
-Version: 4
+Date: 14/03/2018
+Version: 5
 """
 
 
@@ -28,10 +28,7 @@ TILE_DISTANCE = 14
 
 
 # The angle used for edge of track avoidance
-CORRECTION_ANGLE = bot.QUARTER_TURN / 2
-
-# The tile counter object
-tile_counter = TileCounter()
+CORRECTION_ANGLE = bot.QUARTER_TURN / 4
 
 
 """
@@ -46,11 +43,13 @@ tile is passed.
 
 
 def drive_off():
+    tile_counter = TileReader()
     tiles_passed = 0
     while tiles_passed < TILE_DISTANCE:
-        move_to_next_tile()
+        move_to_next_tile(tile_counter)
         tiles_passed += 1
         Sound.beep()
+    correct_heading(tile_counter)
     bot.turn_right(bot.QUARTER_TURN)
 
 
@@ -65,20 +64,37 @@ the function is called.
 """
 
 
-def move_to_next_tile():
-    # Check for white to either side
-    left_white = check_side(bot.LEFT)
-    right_white = check_side(bot.RIGHT)
-    # Compute a course correction
-    if not left_white and not right_white:
-        pass
-    elif left_white and not right_white:
-        bot.turn_right(CORRECTION_ANGLE / 2)
-    elif right_white and not left_white:
-        bot.turn_left(CORRECTION_ANGLE / 2)
-    # drive forward
+def move_to_next_tile(tile_counter):
+    correct_heading(tile_counter)
     tile_counter.reset()
-    bot.drive_until(tile_counter.found_black)
+    bot.drive_until(lambda: tile_counter.found_black)
+
+
+"""
+correct_heading() - corrects the bots heading.
+
+The correction is relative to the edges of the black tile,
+which the bot is assumed to start on.
+"""
+
+
+def correct_heading(tile_counter):
+    correction_factor = 1 / 3
+    circle_degrees = 360
+    tile_counter.reset()
+    left_dist = bot.curve_left_until(lambda: tile_counter.found_white)
+    left_angle = (left_dist / bot.FULL_TURN) * circle_degrees
+    bot.curve_left(-left_dist)
+    tile_counter.reset()
+    right_dist = bot.curve_right_until(lambda: tile_counter.found_white)
+    right_angle = (right_dist / bot.FULL_TURN) * circle_degrees
+    bot.curve_right(-right_dist)
+    left_correction_angle = (left_angle - right_angle) * correction_factor
+    left_correction = (left_correction_angle / circle_degrees) * bot.FULL_TURN
+    if left_correction > 0:
+        bot.curve_left(left_correction)
+    else:
+        bot.curve_right(bot.RIGHT * left_correction)
 
 
 """
@@ -87,13 +103,13 @@ def move_to_next_tile():
 """
 
 
-def check_side(direction):
+def check_side(direction, tile_counter):
     tile_counter.reset()
     bot.turn_left(direction * CORRECTION_ANGLE)
     sleep(tile_counter.colour_sensor.SENSOR_PERIOD)
     bot.turn_right(direction * CORRECTION_ANGLE)
-    found_white = colour_sensor.found_white
-    colour_sensor.reset()
+    found_white = tile_counter.found_white
+    tile_counter.reset()
     return found_white
 
 
@@ -106,7 +122,7 @@ class TileReader:
     current_colour = 0
 
     # The light intensify threshold factor indicating going from black to white
-    BLACK_THRESHOLD = 2
+    BLACK_THRESHOLD = 1.7
 
     # The object to read values from
     colour_sensor = None
