@@ -13,9 +13,11 @@ If you use the optical sensor to count tiles as you navigate, allow for the
 bot's passage over the small (light and dark) tiles.
 
 Author: 
-Date: 07/03/2018
+Date: 14/03/2018
 Version: 1
 """
+
+import threading
 
 
 """
@@ -37,3 +39,4 @@ independently of other functions by executing phase_one.py on the bot
 """
 if __name__ == "__main__":
     approach_tower()
+
