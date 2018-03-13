@@ -49,6 +49,7 @@ def drive_off():
         move_to_next_tile(tile_counter)
         tiles_passed += 1
         Sound.beep()
+    correct_heading(tile_counter)
     bot.turn_right(bot.QUARTER_TURN)
 
 
@@ -64,39 +65,36 @@ the function is called.
 
 
 def move_to_next_tile(tile_counter):
+    correct_heading(tile_counter)
+    tile_counter.reset()
+    bot.drive_until(lambda: tile_counter.found_black)
+
+
+"""
+correct_heading() - corrects the bots heading.
+
+The correction is relative to the edges of the black tile,
+which the bot is assumed to start on.
+"""
+
+
+def correct_heading(tile_counter):
+    correction_factor = 1 / 3
+    circle_degrees = 360
     tile_counter.reset()
     left_dist = bot.curve_left_until(lambda: tile_counter.found_white)
-    left_angle = (left_dist / bot.FULL_TURN) * 360
+    left_angle = (left_dist / bot.FULL_TURN) * circle_degrees
     bot.curve_left(-left_dist)
     tile_counter.reset()
     right_dist = bot.curve_right_until(lambda: tile_counter.found_white)
-    right_angle = (right_dist / bot.FULL_TURN) * 360
+    right_angle = (right_dist / bot.FULL_TURN) * circle_degrees
     bot.curve_right(-right_dist)
-    left_correction_angle = (left_angle - right_angle) / 3
-    left_correction = (left_correction_angle / 360) * bot.FULL_TURN
-    print("l: ", left_angle)
-    print("r: ", right_angle)
-    print("c: ", left_correction)
+    left_correction_angle = (left_angle - right_angle) * correction_factor
+    left_correction = (left_correction_angle / circle_degrees) * bot.FULL_TURN
     if left_correction > 0:
         bot.curve_left(left_correction)
     else:
-        bot.curve_right(-1 * left_correction)
-    """
-    # Check for white to either side
-    left_white = check_side(bot.LEFT, tile_counter)
-    right_white = check_side(bot.RIGHT, tile_counter)
-    
-    # Compute a course correction
-    if not left_white and not right_white:
-        pass
-    elif left_white and not right_white:
-        bot.turn_right(CORRECTION_ANGLE)
-    elif right_white and not left_white:
-        bot.turn_left(CORRECTION_ANGLE )
-    # drive forward
-    """
-    tile_counter.reset()
-    bot.drive_until(lambda: tile_counter.found_black)
+        bot.curve_right(bot.RIGHT * left_correction)
 
 
 """
