@@ -236,7 +236,7 @@ aSensor.value()
 class LightIntensitySensor:
 
     # The period of time the sensor averages data over (seconds)
-    SENSOR_PERIOD = 0.1
+    SENSOR_PERIOD = 0.2
 
     # The number of data points the sensor saves
     SENSOR_PRECISION = 5
