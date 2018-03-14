@@ -94,6 +94,27 @@ def drive_until(predicate, distance=0, speed=NORMAL_SPEED):
 
 
 """
+ drive_turning_until() drives forward in a turn until a condition is met
+"""
+
+
+def drive_turning_until(predicate, direction, speed=NORMAL_SPEED):
+    turn_factor = 1.3
+    if direction == LEFT:
+        print("left")
+        leftMotor.run_forever(speed_sp=speed)
+        rightMotor.run_forever(speed_sp=turn_factor * speed)
+    else:
+        print("right")
+        leftMotor.run_forever(speed_sp=turn_factor * speed)
+        rightMotor.run_forever(speed_sp=speed)
+    while not predicate():
+        sleep(0.1)
+    leftMotor.stop()
+    rightMotor.stop()
+
+
+"""
 turn_left blocks while turning the bot 'distance' degrees left on the spot.
 
 Usage:
@@ -293,6 +314,7 @@ Sonar aims to remove noise by taking the average reading over time.
 Sonar return the distance to the object in CM.
 """
 
+
 class Sonar:
 
     # The period for the sonar to average, in seconds
@@ -319,6 +341,7 @@ class Sonar:
         self.daemon = threading.Thread(target=self.sensor_loop)
         self.daemon.deamon = True
         self.daemon.start()
+        sleep(self.SENSOR_PERIOD * 1.2)
 
     """
     sensor_loop: reads and averages the ultrasound range.
@@ -340,6 +363,8 @@ class Sonar:
         for i in range(len(self.data)):
             average += self.data[i]
         average /= len(self.data)
+        # The values the bot returns are actually mm
+        average /= 10
         return average
 
     """

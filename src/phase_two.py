@@ -17,7 +17,14 @@ Date: 14/03/2018
 Version: 1
 """
 
-import threading
+from ev3dev import ev3
+import bot
+from time import sleep
+
+
+# The distance in front of the tower to stop (cm).
+# This allows for some delay in the bot actually stopping.
+PROXIMITY_THRESHOLD = 6
 
 
 """
@@ -30,7 +37,79 @@ the tower, ready for phase three to begin
 
 
 def approach_tower():
+    bot.drive_forward(2 * bot.FULL_TURN)
+    scan_approach(bot.NORMAL_SPEED)
+    """
+    bot.drive_turning_until(lambda: False, bot.LEFT)
+    sonar = bot.Sonar()
+    while True:
+        sleep(sonar.SENSOR_PERIOD)
+        print(sonar.value())
+    """
+
+
+"""
+scan_approach() drives forward while homing on the minimum sonar value.
+
+scan_approach assumes the tower is to the right of the robot
+"""
+### Currently overcorrecting near end
+### TODO: special case or make chek more freqqunc
+
+def scan_approach(speed):
+    sonar_reader = SonarReader()
+    direction = bot.RIGHT
+    while sonar_reader.value() > PROXIMITY_THRESHOLD:
+        bot.drive_turning_until(sonar_reader.has_increased, direction, speed)
+        # Reverse the direction
+        print("Reversing")
+        direction *= -1
     return
+
+
+"""
+SonarReader reads sonar values to tell if the value is increasing.
+
+Depends upon calls to read. We may want to put this into a 
+thread to check the sonar regularly
+"""
+
+
+class SonarReader:
+
+    # The previous reading
+    previous_reading = 256
+
+    # The current reading
+    current_reading = 256
+
+    # The factor to recognise a change in values
+    SONAR_THRESHOLD = 1.02
+
+    # The sonar to use
+    sonar = None
+
+    def __init__(self):
+        self.sonar = bot.Sonar()
+
+    """
+    has_increased() checks if the sonar reading has increased.
+    """
+
+    def has_increased(self):
+        self.previous_reading = self.current_reading
+        self.current_reading = self.sonar.value()
+        if self.current_reading > self.SONAR_THRESHOLD * self.previous_reading:
+            return True
+        return False
+
+    """
+    Returns the current reading of the sonar
+    """
+    def value(self):
+        self.previous_reading = self.current_reading
+        self.current_reading = self.sonar.value()
+        return self.current_reading
 
 
 """
