@@ -50,7 +50,7 @@ def drive_off():
         tiles_passed += 1
         Sound.beep()
     correct_heading(tile_counter)
-    bot.turn_right(bot.QUARTER_TURN)
+    bot.turn_right(3 * bot.QUARTER_TURN / 4)
 
 
 """
