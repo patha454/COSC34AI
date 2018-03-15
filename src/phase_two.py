@@ -24,7 +24,7 @@ from time import sleep
 
 # The distance in front of the tower to stop (cm).
 # This allows for some delay in the bot actually stopping.
-PROXIMITY_THRESHOLD = 6
+PROXIMITY_THRESHOLD = 15
 
 
 """
@@ -60,7 +60,8 @@ def scan_approach(speed):
     sonar_reader = SonarReader()
     direction = bot.RIGHT
     while sonar_reader.value() > PROXIMITY_THRESHOLD:
-        bot.drive_turning_until(sonar_reader.has_increased, direction, speed)
+        print(sonar_reader.value())
+        bot.drive_turning_until(lambda: sonar_reader.has_increased or sonar_reader.value() < PROXIMITY_THRESHOLD, direction, speed)
         # Reverse the direction
         print("Reversing")
         direction *= -1
@@ -84,7 +85,7 @@ class SonarReader:
     current_reading = 256
 
     # The factor to recognise a change in values
-    SONAR_THRESHOLD = 1.02
+    SONAR_THRESHOLD = 1.1
 
     # The sonar to use
     sonar = None
