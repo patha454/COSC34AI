@@ -125,8 +125,8 @@ turn_left(someDistance, someSpeed)
 
 
 def turn_left(distance, speed=NORMAL_SPEED):
-    leftMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
-    rightMotor.run_to_rel_pos(position_sp=-distance, speed_sp=speed)
+    leftMotor.run_to_rel_pos(position_sp=-distance, speed_sp=speed)
+    rightMotor.run_to_rel_pos(position_sp=distance, speed_sp=speed)
     leftMotor.wait_while('running')
     rightMotor.wait_while('running')
     return
