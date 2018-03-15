@@ -318,7 +318,7 @@ Sonar return the distance to the object in CM.
 class Sonar:
 
     # The period for the sonar to average, in seconds
-    SENSOR_PERIOD = 0.2
+    SENSOR_PERIOD = 0.1
 
     # The samples to take over SENSOR_PERIOD
     SENSOR_SAMPLES = 5
