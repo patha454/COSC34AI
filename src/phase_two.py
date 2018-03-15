@@ -61,7 +61,7 @@ def scan_approach(speed):
     direction = bot.RIGHT
     while sonar_reader.value() > PROXIMITY_THRESHOLD:
         print(sonar_reader.value())
-        bot.drive_turning_until(sonar_reader.has_increased, direction, speed)
+        bot.drive_turning_until(sonar_reader.has_increased or sonar_reader.value() < PROXIMITY_THRESHOLD, direction, speed)
         # Reverse the direction
         print("Reversing")
         direction *= -1
