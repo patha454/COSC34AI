@@ -18,9 +18,9 @@ Drive forward for 7 big white tiles and put the bot in contact with the tower.
 Using any combination of sonar, touch, & camera sensors, and dead reckoning to locate the tower.
 Course changes, if necessary to put the bot in , could be made during the driving or after advancing to locate the tower.
 
-Assigned to:
+Assigned to: L Griffin
 
-Status:
+Status: Writing code for this task.
 
 
 ##Part 3:
