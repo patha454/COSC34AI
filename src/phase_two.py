@@ -38,7 +38,7 @@ the tower, ready for phase three to begin
 
 DISTANCE_BEFORE_CHECKING = bot.FULL_TURN
 
-THRESHOLD_DISTANCE = 150
+THRESHOLD_DISTANCE = 200
 
 
 def approach_tower():
@@ -46,9 +46,6 @@ def approach_tower():
     bot.drive_forward(2.5 * bot.FULL_TURN, bot.LIGHT_SPEED)
     # points bot in right direction and sets distance to tower
     while not stopping_condition():
-        #point_to_tower()
-        #if stopping_condition():
-            #break
         bot.drive_forward(bot.FULL_TURN, bot.LIGHT_SPEED)
         if stopping_condition():
             break
@@ -57,7 +54,7 @@ def approach_tower():
     return
 
 
-TURNS_TO_MAKE = 10
+TURNS_TO_MAKE = 8
 TOTAL_SCAN = 0.5 * bot.QUARTER_TURN
 SMALL_DISTANCE = TOTAL_SCAN / TURNS_TO_MAKE
 TURN_FACTOR = 5

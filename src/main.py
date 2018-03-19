@@ -30,6 +30,7 @@ bot is idle, ready to begin the next phase.
 
 
 def main():
+    Sound.play("/home/robot/src/fin.wav").wait()
     phase_one.drive_off()
     phase_two.approach_tower()
     phase_three.push_tower()
