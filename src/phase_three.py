@@ -12,6 +12,7 @@ Version: 1
 """
 import bot
 from ev3dev.ev3 import *
+from time import sleep
 
 """
 push_tower() pushes the tower block off the square it's currently in.
@@ -23,6 +24,10 @@ has stopped, to indicate completion of the task.
 
 
 def push_tower():
+    bot.drive_forward(-0.5 * bot.FULL_TURN)
+    bot.drive_forward(3 * bot.FULL_TURN, bot.LUDICROUS_SPEED)
+    Sound.beep()
+    sleep(1)
     Sound.beep()
     return
 

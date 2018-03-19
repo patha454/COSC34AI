@@ -43,19 +43,32 @@ THRESHOLD_DISTANCE = 150
 
 def approach_tower():
     # Move within sensor range (2m) of the tower
-    bot.drive_forward(5 * bot.FULL_TURN)
+    bot.drive_forward(2.5 * bot.FULL_TURN, bot.LIGHT_SPEED)
     # points bot in right direction and sets distance to tower
-    while us.value() > THRESHOLD_DISTANCE:
+    while not stopping_condition():
         point_to_tower()
-        bot.drive_forward(bot.FULL_TURN)
+        bot.drive_forward(bot.FULL_TURN, bot.LIGHT_SPEED)
     point_to_tower()
     return
 
 
-SMALL_DISTANCE = 5
 TURNS_TO_MAKE = 10
+SMALL_DISTANCE = 0.5 * bot.QUARTER_TURN / TURNS_TO_MAKE
 TURN_FACTOR = 5
 MINIMUM_TURN = 2
+
+t1 = TouchSensor('in1')
+t2 = TouchSensor('in2')
+
+
+"""
+Stopping condition for phase two
+"""
+
+
+def stopping_condition():
+    return us.value() < THRESHOLD_DISTANCE or t1.value() > 0 or t2.value() > 0
+
 
 """
 Scans to each side and points the bot toward the minimum reading
