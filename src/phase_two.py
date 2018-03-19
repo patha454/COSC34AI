@@ -47,8 +47,6 @@ def approach_tower():
     # points bot in right direction and sets distance to tower
     while not stopping_condition():
         bot.drive_forward(bot.FULL_TURN, bot.LIGHT_SPEED)
-        if stopping_condition():
-            break
         point_to_tower()
     point_to_tower()
     return
