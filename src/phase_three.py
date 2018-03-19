@@ -26,7 +26,7 @@ has stopped, to indicate completion of the task.
 def push_tower():
     bot.drive_forward(-0.5 * bot.FULL_TURN)
     bot.drive_forward(3 * bot.FULL_TURN, bot.LUDICROUS_SPEED)
-    Sound.play("src/fin.wav").wait()
+    Sound.play("/home/robot/src/fin.wav").wait()
     Sound.beep()
     sleep(1)
     Sound.beep()

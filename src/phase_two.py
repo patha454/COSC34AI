@@ -46,14 +46,20 @@ def approach_tower():
     bot.drive_forward(2.5 * bot.FULL_TURN, bot.LIGHT_SPEED)
     # points bot in right direction and sets distance to tower
     while not stopping_condition():
-        point_to_tower()
+        #point_to_tower()
+        #if stopping_condition():
+            #break
         bot.drive_forward(bot.FULL_TURN, bot.LIGHT_SPEED)
+        if stopping_condition():
+            break
+        point_to_tower()
     point_to_tower()
     return
 
 
 TURNS_TO_MAKE = 10
-SMALL_DISTANCE = 0.5 * bot.QUARTER_TURN / TURNS_TO_MAKE
+TOTAL_SCAN = 0.5 * bot.QUARTER_TURN
+SMALL_DISTANCE = TOTAL_SCAN / TURNS_TO_MAKE
 TURN_FACTOR = 5
 MINIMUM_TURN = 2
 
@@ -110,7 +116,7 @@ def scan(direction):
         if reading < smallest_dist:
             smallest_dist = reading
             correction_angle = angle
-    bot.turn_right(direction * (SMALL_DISTANCE * TURNS_TO_MAKE))
+    bot.turn_right(direction * TOTAL_SCAN)
     result = []
     result.append(smallest_dist)
     print("corr", correction_angle)

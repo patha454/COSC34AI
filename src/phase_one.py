@@ -28,6 +28,7 @@ TILE_DISTANCE = 14
 
 
 # The angle used for edge of track avoidance
+# was /4
 CORRECTION_ANGLE = bot.QUARTER_TURN / 4
 
 
@@ -79,7 +80,8 @@ which the bot is assumed to start on.
 
 
 def correct_heading(tile_counter):
-    correction_factor = 1 / 3
+    # was one thrid
+    correction_factor = 1 / 4
     circle_degrees = 360
     tile_counter.reset()
     left_dist = bot.curve_left_until(lambda: tile_counter.found_white)
