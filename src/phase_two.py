@@ -17,9 +17,13 @@ Date: 07/03/2018
 Version: 1
 """
 
+from ev3dev.ev3 import *
+import bot
+from time import sleep
+
 # creates ultrasonic sensor and puts sensor into distance mode
-ultraS = UltrasonicSensor()
-ultraS.mode = 'US-DIST-CM'
+us = UltrasonicSensor()
+us.mode = 'US-DIST-CM'
 
 # reports 'cm' even though sensor measures in 'mm'
 units = us.units
@@ -34,60 +38,72 @@ the tower, ready for phase three to begin
 
 DISTANCE_BEFORE_CHECKING = bot.FULL_TURN
 
+THRESHOLD_DISTANCE = 150
+
+
 def approach_tower():
+    # Move within sensor range (2m) of the tower
+    bot.drive_forward(5 * bot.FULL_TURN)
     # points bot in right direction and sets distance to tower
-    distance = point_to_tower()
-
-    # drives bot forward a distance and then points bot in right direction until distance = 0
-    while (distance > 0) {
-        bot.drive_forward(DISTANCE_BEFORE_CHECKING)
-        distance = point_to_tower()   	
-    }
-
+    while us.value() > THRESHOLD_DISTANCE:
+        point_to_tower()
+        bot.drive_forward(bot.FULL_TURN)
+    point_to_tower()
     return
 
-""" 
-Scans slightly left and right and infront and finds the smallest distance to an 
-item infront of it, stops the bot in the position with the sensor in the position
-closest to item.
+
+SMALL_DISTANCE = 5
+TURNS_TO_MAKE = 10
+TURN_FACTOR = 5
+MINIMUM_TURN = 2
+
+"""
+Scans to each side and points the bot toward the minimum reading
 """
 
-SMALL_DISTANCE = 1
-TURNS_TO_MAKE = 20
 
-def point_to_tower(): 
-    smallest_distance = us.value()
-    found_angle = 0
+def point_to_tower():
+    DISTANCE = 0
+    ANGLE = 1
+    left = scan(bot.LEFT)
+    right = scan(bot.RIGHT)
+    print("l", left[DISTANCE], "r", right[DISTANCE])
+    if left[DISTANCE] < right[DISTANCE]:
+        print("l", left[ANGLE])
+        if (left[ANGLE]) < MINIMUM_TURN:
+            return
+        bot.turn_left(left[ANGLE]*TURN_FACTOR)
+    else:
+        print("r", right[ANGLE])
+        if (right[ANGLE]) < MINIMUM_TURN:
+            return
+        bot.turn_right(right[ANGLE]*TURN_FACTOR)
+    return
 
-    # scans left to try find a smaller distance
-    for x in range(0, TURNS_TO_MAKE):   
-        bot.turn_left(SMALL_DISTANCEi, bot.SLOW_SPEED)
-        if (us.value() < smallest_distance) {
-	    smallest_distance = us.value()
-            found_angle = -(x)
-	}
-    
-    # returns bot to start position
-    bot.turn_right(SMALL_DISTANCE * TURNS_TO_MAKE, bot.SLOW_SPEED)
 
-    # scans right to try find a smaller distance
-     for y in range(0, TURNS_TO_MAKE):
-          bot.turn_right(SMALL_DISTANCE, bot.SLOW_SPEED)
-          if (us.value() < smallest_distance) {
-              smallest_distance = us.value()
-	      found_angle = x
-          }
+"""
+scan() returns an ordered list containing the minimum value found, and 
+the angle it was found at
+"""
 
-     # returns bot to start position
-     bot.turn_left(SMALL_DISTANCE * TURNS_TO_MAKE, bot.SLOW_SPEED)
 
-     if (x < 0) {
-     	bot.turn_left(SMALL_DISTANCE * abs(x), bot.SLOW_SPEED)
-     } else if (x > 0) {
-        bot.turn_right(SMALL_DISTANCE * x, bot.SLOW_SPEED)
-     }
-    
-     return smallest_distance	
+def scan(direction):
+    smallest_dist = 3000
+    correction_angle = 0
+    for angle in range(TURNS_TO_MAKE):
+        bot.turn_left(direction * SMALL_DISTANCE)
+        sleep(0.05)
+        reading = us.value()
+        if reading < smallest_dist:
+            smallest_dist = reading
+            correction_angle = angle
+    bot.turn_right(direction * (SMALL_DISTANCE * TURNS_TO_MAKE))
+    result = []
+    result.append(smallest_dist)
+    print("corr", correction_angle)
+    result.append(correction_angle)
+    return result
+
 
 """
 __main()__ is provided for testing, so approach_tower() can be executed
