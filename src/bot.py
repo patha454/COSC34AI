@@ -246,6 +246,7 @@ class LightIntensitySensor:
 
     sensor = None
     data = []
+    dataLock = threading.RLock()
     sensor_thread = None
 
     def __init__(self):
@@ -260,10 +261,12 @@ class LightIntensitySensor:
 
     def sensor_loop(self):
         while self.alive:
+            self.dataLock.acquire()
             reading = self.sensor.value()
             if len(self.data) >= self.SENSOR_PRECISION:
                 self.data.pop(0)
             self.data.append(reading)
+            self.dataLock.release()
             sleep(self.SENSOR_PERIOD / self.SENSOR_PRECISION)
         return
 
@@ -274,7 +277,9 @@ class LightIntensitySensor:
     def value(self):
         average = 0
         for i in range(self.SENSOR_PRECISION):
+            self.dataLock.acquire()
             average += self.data[i]
+            self.dataLock.release()
         average /= self.SENSOR_PRECISION
         return average
 
