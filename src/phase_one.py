@@ -46,6 +46,11 @@ tile is passed.
 def drive_off():
     tile_counter = TileReader()
     tiles_passed = 0
+    tile_counter.reset()
+    bot.drive_until(lambda: tile_counter.found_black)
+    Sound.beep()
+    tile_counter.reset()
+    bot.turn_right(bot.QUATER_TURN)    
     while tiles_passed < TILE_DISTANCE:
         move_to_next_tile(tile_counter)
         tiles_passed += 1
