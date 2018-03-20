@@ -62,7 +62,7 @@ def drive_off():
         Sound.beep()
     correct_heading(tile_counter)
     #Changed up from 3/4
-    bot.turn_right(0.85 * bot.NINETY_DEG)
+    bot.turn_right(0.95 * bot.NINETY_DEG)
 
 
 """

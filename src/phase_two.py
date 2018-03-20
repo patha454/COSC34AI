@@ -38,7 +38,7 @@ the tower, ready for phase three to begin
 
 DISTANCE_BEFORE_CHECKING = bot.FULL_TURN
 
-THRESHOLD_DISTANCE = 150
+THRESHOLD_DISTANCE = 250
 
 
 def approach_tower():
@@ -58,7 +58,7 @@ def approach_tower():
 TURNS_TO_MAKE = 8
 TOTAL_SCAN = 0.5 * bot.QUARTER_TURN
 SMALL_DISTANCE = TOTAL_SCAN / TURNS_TO_MAKE
-TURN_FACTOR = 6
+TURN_FACTOR = 8
 MINIMUM_TURN = 2
 
 t1 = TouchSensor('in1')
