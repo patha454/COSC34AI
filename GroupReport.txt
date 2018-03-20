@@ -1,0 +1,19 @@
+Group Two:
+
+Fleury, S;
+Griffin, L;
+Paterson, H;
+Scarlet, A.
+
+Group Two was tasked to develop a basic AI system to navigate a robot over a checcboard-like tile pattern before locating and moving a weighted tower. We accomplished this by working as a single software team to develop each system of our AI in sequence, leavering our respective strengths to resolve each stage of development quickly. We iterated several, increasingly sophisticated, algorithims for each stage of the task, developing new ones in response to the difficulities we encountered during our ongoing testing. We encountered several difficulities during the task, related to our project management was wells as more concret technical issues.
+
+Our bot divides the task into three distinct phases: First, Advancing along the 'chessboard,' while counting tiles; Second, approaching the tower; Third, moving the tower off the tile it's located on. Intermediate tasks which didn't clearly belong in a particular phase, such as turning right after phase one before we could start phase two, were arbitarily assigned to a phase in our initial design.
+
+In phase one, We used a proactive correction algorithim to navigate the tiles. Our initial algorithims assumed course corrections would not be required because the robot would drive straight. Our testing showed this algorithim caused the bot deviate from the expected straight course and the error accumulation was difficult to corect. The algorithim currently stops after locating each black tile and computes a course correction. Our algorithim computes the correction by multiplying a hardcoded adjustment factor (based on the geometry of the tiles in the test enviroment) with the weighted average of the angle to each side, perpendicular to the direction of movement, of the black tile. Our bot is reset to to its orriginal heading, and the course correction is applied before the bot drives forward searching for the next black tile.
+
+We detect the edges of tiles with by considering the difference of time averages in an independent thread. The task specifications suggested that the lighting conditions in the test enviroment were variable - additionally, the dirt and speckled tiles introduce additional sensor noise. We use the average light-intensity reading over a short period, currently 0.1 seconds, to compensate for the enviromental noise. We realised we could not use absolute or hardcoded values to detect the diffrent tile colours because the detected readings would vary with the ambient lighting. We detect changes in tile colour by monitering the diffrence of the time-averaged readings, relative to a threshold factor. Our algorithim determines colour of the new tile can be determined from the sign of the diffrence: A negitive diffrence indicates the drop in intensity as the bot moves onto a black tile.
+
+Phase two starts assuming the bot is facing aproximatly towards the tower. Initially the algorithim drives forward under dead reckoning, because the tower is outside the maximum range of the ultrasound sonar. The bot enters a search and advance loop when it arrives within sonar range. The bot's search and advance loop searches fourty-five degreese to each side of the robot for sonar returns, orientates the bot toward the minimum sensor reading, and drives a set distance forward. The robot will maintain the search loop until the robot is immediatly in front of the tower, when at least one of the two exit conditions is met: The sonar return is less than a prescribed distance, or a touch sensor is triggered. Finally, the bot once aligns itself straight with respect to the tower.
+
+
+
