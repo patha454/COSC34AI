@@ -93,6 +93,14 @@ def drive_until(predicate, distance=0, speed=NORMAL_SPEED):
     return distance
 
 
+def drive_back_until(predicate, distance=0, speed=NORMAL_SPEED):
+    while not predicate():
+        distance -= TURN_QUANTUM
+        motors.run_to_rel_pos(position_sp=-TURN_QUANTUM, speed_sp=speed)
+        motors.wait_while('running')
+    return distance
+
+
 """
 turn_left blocks while turning the bot 'distance' degrees left on the spot.
 
