@@ -47,16 +47,22 @@ def drive_off():
     tile_counter = TileReader()
     tiles_passed = 0
     tile_counter.reset()
-    bot.drive_until(lambda: tile_counter.found_black)
-    Sound.beep()
+    bot.drive_until(lambda: tile_counter.found_white)
     tile_counter.reset()
-    bot.turn_right(bot.QUATER_TURN)    
+    bot.drive_until(lambda: tile_counter.found_black)
+    tile_counter.reset()
+    Sound.beep()
+    bot.drive_forward(0.15 * bot.FULL_TURN)
+    bot.turn_right(bot.NINETY_DEG)
+    bot.drive_forward(-0.2 * bot.HALF_TURN)
+    tile_counter.reset()
     while tiles_passed < TILE_DISTANCE:
         move_to_next_tile(tile_counter)
         tiles_passed += 1
         Sound.beep()
     correct_heading(tile_counter)
-    bot.turn_right(bot.QUARTER_TURN)
+    #Changed up from 3/4
+    bot.turn_right(0.85 * bot.NINETY_DEG)
 
 
 """
