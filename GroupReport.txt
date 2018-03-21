@@ -27,8 +27,7 @@ During the final phase of testing, we reviewed the specifications and realised h
 
 Finally, we encountered some softer difficulties in our timetables. We would have prefered to approach this project by meeting and working together with a test robot. Our scheduals prevented more than two of us meeting at a time, so we had to find another approach. We realised that only one of us, at any time, would be able to test the robot in the labs and correct bugs. We decided to use our poor schedualing to our advantage and use a 'programming team' model, where we concentrated our respective tallents on the same part of the project until it was finished. Under this system, our strongest Python programmer took responsibility for writing the code, two algorithimists provided theroycrafted the algorithims, and one approver pro-activly reviewed identified possible bugs in the code. We used this system because we did not need to be in the lab at the same time to preform our tasks: The programmer could write and test at his will, the algorithimis could view the test envirment at their leasure, and the reviewer could provide a fresh pair of eyes from anywhere he could access the code. We also were able to develop our bot very quickly and reliably with this approach
 
-
-
+Throughout our development of the bot we needed to solve a number of technical and non-technical problems. We were each challanged by our lack of forsight, lazy programming, and personal scheduals. Individually, these challanges would have caused us significant difficulity. Collectily, we were able to pool our abilities and resolve our challanges efficently. Our collebration produced a series of simple, but robust algorithims that allow our robot to complete the task in a reasonable manner.
 
 
 
